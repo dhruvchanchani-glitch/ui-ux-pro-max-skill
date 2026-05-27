@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MYP Companion — Learn · Understand · Succeed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root {
+  --primary: #0B1437;
+  --primary-2: #1A2A5E;
+  --primary-3: #243882;
+  --accent: #D4AF37;
+  --accent-2: #F0D060;
+  --accent-3: #B8941F;
+  --surface: #F7F8FC;
+  --surface-2: #EEF1F8;
+  --card: #FFFFFF;
+  --text: #0B1437;
+  --text-2: #4A5578;
+  --text-3: #8892B0;
+  --success: #059669;
+  --success-bg: #D1FAE5;
+  --warn: #D97706;
+  --warn-bg: #FEF3C7;
+  --danger: #DC2626;
+  --danger-bg: #FEE2E2;
+  --border: #E5E7EB;
+  --border-2: #D1D5DB;
+  --shadow-sm: 0 1px 2px rgba(11,20,55,.04), 0 1px 3px rgba(11,20,55,.06);
+  --shadow: 0 4px 6px -1px rgba(11,20,55,.06), 0 10px 25px -5px rgba(11,20,55,.10);
+  --shadow-lg: 0 25px 50px -12px rgba(11,20,55,.18);
+  --shadow-gold: 0 8px 30px rgba(212,175,55,.25);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--surface);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+h1, h2, h3, h4 { font-family: 'Playfair Display', serif; font-weight: 800; letter-spacing: -0.02em; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ====== SHADER HERO ====== */
+.shader-hero {
+  min-height: 100vh;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.shader-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(212,175,55,.35), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(11,20,55,.8), transparent 50%),
+    radial-gradient(ellipse 70% 70% at 50% 50%, rgba(26,42,94,.6), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 70% 70%, rgba(184,148,31,.2), transparent 50%),
+    #000;
+  animation: shaderMove 12s ease-in-out infinite alternate;
+}
+@keyframes shaderMove {
+  0% { filter: hue-rotate(0deg) brightness(1); transform: scale(1); }
+  50% { filter: hue-rotate(10deg) brightness(1.1); transform: scale(1.05); }
+  100% { filter: hue-rotate(-5deg) brightness(0.95); transform: scale(1); }
+}
+.shader-mesh {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image:
+    linear-gradient(rgba(212,175,55,.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,.3) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: meshDrift 20s linear infinite;
+}
+@keyframes meshDrift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-60px, -60px) rotate(2deg); }
+}
+.shader-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: orbFloat 8s ease-in-out infinite alternate;
+}
+.shader-orb-1 { width: 400px; height: 400px; left: -100px; top: 30%; background: rgba(212,175,55,.25); animation-delay: 0s; }
+.shader-orb-2 { width: 300px; height: 300px; right: -50px; top: 10%; background: rgba(26,42,94,.4); animation-delay: -3s; }
+.shader-orb-3 { width: 250px; height: 250px; left: 40%; bottom: -50px; background: rgba(184,148,31,.15); animation-delay: -5s; }
+@keyframes orbFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -30px) scale(1.15); }
+}
+
+.shader-header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+}
+.shader-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.shader-logo svg { transition: transform 0.3s; }
+.shader-logo:hover svg { transform: rotate(-5deg) scale(1.1); }
+.shader-nav { display: flex; gap: 4px; }
+.shader-nav a {
+  color: rgba(255,255,255,.7);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 999px;
+  transition: all 0.2s;
+}
+.shader-nav a:hover { color: white; background: rgba(255,255,255,.08); }
+.shader-login-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.shader-login-arrow {
+  position: absolute;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  transform: translateX(-44px);
+  z-index: 0;
+}
+.shader-login-group:hover .shader-login-arrow { transform: translateX(-80px); }
+.shader-login-btn {
+  padding: 8px 24px;
+  border-radius: 999px;
+  background: white;
+  color: black;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  transition: background 0.2s;
+}
+.shader-login-btn:hover { background: rgba(255,255,255,.9); }
+
+.shader-main {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  z-index: 20;
+  max-width: 640px;
+}
+.shader-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeSlideUp 0.6s ease 0.2s both;
+}
+.shader-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,.4), transparent);
+}
+.shader-badge span { color: rgba(255,255,255,.9); font-size: 14px; font-weight: 500; letter-spacing: 0.02em; }
+
+.shader-h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(48px, 8vw, 88px);
+  font-weight: 800;
+  color: white;
+  line-height: 0.95;
+  margin-bottom: 24px;
+  letter-spacing: -0.03em;
+  animation: fadeSlideUp 0.8s ease 0.4s both;
+}
+.shader-h1 .line-1 {
+  display: block;
+  font-weight: 300;
+  font-size: 0.6em;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #fff 0%, #D4AF37 40%, #0B1437 70%, #fff 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 6s ease infinite;
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.shader-h1 .line-2 { display: block; font-weight: 900; text-shadow: 0 4px 30px rgba(0,0,0,.5); }
+.shader-h1 .line-3 { display: block; font-weight: 300; font-style: italic; color: rgba(255,255,255,.75); }
+
+.shader-desc {
+  font-size: 18px;
+  font-weight: 300;
+  color: rgba(255,255,255,.65);
+  line-height: 1.7;
+  max-width: 540px;
+  margin-bottom: 32px;
+  animation: fadeSlideUp 0.6s ease 0.8s both;
+}
+.shader-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  animation: fadeSlideUp 0.6s ease 1s both;
+}
+.shader-btn-outline {
+  padding: 16px 36px;
+  border-radius: 999px;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,.25);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+  font-family: inherit;
+}
+.shader-btn-outline:hover { background: rgba(255,255,255,.08); border-color: rgba(212,175,55,.5); color: #F0D060; }
+.shader-btn-gold {
+  padding: 16px 36px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border: none;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  box-shadow: 0 8px 32px rgba(212,175,55,.4);
+}
+.shader-btn-gold:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(212,175,55,.5); }
+
+.shader-spinner {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  z-index: 30;
+  width: 80px;
+  height: 80px;
+}
+.shader-spinner-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--accent);
+  border-right-color: rgba(212,175,55,.3);
+  animation: spin 8s linear infinite;
+}
+.shader-spinner-ring:nth-child(2) {
+  inset: 6px;
+  border-top-color: rgba(255,255,255,.3);
+  border-right-color: transparent;
+  animation-direction: reverse;
+  animation-duration: 12s;
+}
+.shader-spinner-core {
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,.4), transparent 70%);
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+@keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
+@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+.shader-cta-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 24px;
+}
+.shader-cta-enter {
+  padding: 14px 36px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.15);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+}
+.shader-cta-enter:hover { background: rgba(255,255,255,.15); border-color: rgba(212,175,55,.4); }
+
+/* ====== APP SHELL ====== */
+.app {
+  display: grid;
+  grid-template-columns: 264px 1fr;
+  min-height: 100vh;
+}
+
+/* ====== SIDEBAR ====== */
+.sidebar {
+  background:
+    radial-gradient(ellipse 600px 300px at top, rgba(212,175,55,0.12), transparent 60%),
+    radial-gradient(ellipse 400px 400px at bottom right, rgba(212,175,55,0.08), transparent 60%),
+    linear-gradient(180deg, #060B24 0%, #0B1437 40%, #15224F 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid rgba(212,175,55,.18);
+  display: flex;
+  flex-direction: column;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(212,175,55,.2); border-radius: 4px; }
+.sidebar-inner { padding: 26px 18px 18px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 6px 22px;
+  border-bottom: 1px solid rgba(212,175,55,.15);
+  margin-bottom: 18px;
+}
+.brand-mark {
+  width: 46px; height: 46px;
+  border-radius: 13px;
+  background: radial-gradient(circle at 30% 30%, #F4D783, #D4AF37 70%, #B8941F);
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 1px rgba(212,175,55,.4), 0 6px 18px rgba(212,175,55,.35), inset 0 1px 0 rgba(255,255,255,.4);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.brand-mark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.4) 0%, transparent 50%);
+}
+.brand-name { font-family: 'Playfair Display', serif; font-weight: 800; font-size: 18px; color: white; }
+.brand-tag { font-size: 10px; letter-spacing: .14em; color: var(--accent); text-transform: uppercase; font-weight: 600; margin-top: 2px; }
+
+.nav-label {
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(212,175,55,.55);
+  margin: 16px 8px 8px;
+  font-weight: 700;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgba(255,255,255,.72);
+  margin-bottom: 2px;
+  transition: all .2s ease;
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+  position: relative;
+}
+.nav-item:hover { background: rgba(255,255,255,.04); color: white; transform: translateX(2px); }
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(212,175,55,.24) 0%, rgba(212,175,55,.04) 70%, transparent 100%);
+  color: white;
+  border-color: rgba(212,175,55,.3);
+  box-shadow: inset 3px 0 0 var(--accent), 0 4px 14px rgba(212,175,55,.12);
+  font-weight: 600;
+}
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+.nav-item.active svg { color: var(--accent); }
+
+.profile-card {
+  margin-top: auto;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(212,175,55,.1) 0%, rgba(255,255,255,.02) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(212,175,55,.18);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,.3), transparent);
+}
+.avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: grid; place-items: center;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ====== MAIN ====== */
+.main { padding: 32px 40px 60px; max-width: 1400px; width: 100%; }
+
+/* ====== HERO BANNER ====== */
+.hero {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 60%, var(--primary-3) 100%);
+  color: white;
+  border-radius: 20px;
+  padding: 36px 38px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  animation: fadeSlideUp 0.5s ease both;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  right: -80px; top: -80px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(212,175,55,.25) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  left: -40px; bottom: -100px;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(255,255,255,.05) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-content { position: relative; z-index: 2; flex: 1; }
+.hero-eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; font-weight: 600; }
+.hero-title { font-family: 'Playfair Display', serif; font-size: 38px; line-height: 1.1; margin-bottom: 10px; font-weight: 800; }
+.hero-title .gold { background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero-sub { color: rgba(255,255,255,.78); font-size: 15px; max-width: 580px; margin-bottom: 22px; line-height: 1.6; position: relative; }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; position: relative; }
+
+/* ====== CARDS ====== */
+.card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: all .22s ease;
+}
+.card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+/* ====== STAT CARDS ====== */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 26px; animation: fadeSlideUp 0.5s ease 0.1s both; }
+.stat-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  transition: all .22s ease;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.stat-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+}
+.stat-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 800; line-height: 1; color: var(--primary); }
+.stat-label { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .1em; font-weight: 600; margin-top: 4px; }
+
+/* ====== BUTTONS ====== */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all .18s ease;
+  font-family: inherit;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(11,20,55,.25); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all .18s ease;
+  font-family: inherit;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--primary);
+}
+.btn-secondary:hover { transform: translateY(-1px); box-shadow: var(--shadow-gold); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,.3);
+  transition: all .18s ease;
+  font-family: inherit;
+  background: rgba(255,255,255,.12);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+.btn-ghost:hover { background: rgba(255,255,255,.2); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1.5px solid var(--border-2);
+  transition: all .18s ease;
+  font-family: inherit;
+  background: transparent;
+  color: var(--text);
+}
+.btn-outline:hover { border-color: var(--primary); background: var(--surface-2); }
+.btn-block { width: 100%; justify-content: center; }
+.btn-sm { padding: 7px 14px; font-size: 12px; }
+.btn-lg { padding: 14px 26px; font-size: 15px; }
+
+/* ====== INPUTS ====== */
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.18s;
+  background: white;
+  color: var(--primary);
+}
+.input-field:focus { border-color: var(--accent); }
+
+/* ====== SECTIONS ====== */
+.section-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--primary); margin-top: 36px; margin-bottom: 6px; }
+.section-sub { color: var(--text-2); margin-bottom: 18px; font-size: 14px; }
+
+/* ====== CRITERION CARDS ====== */
+.criterion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+.criterion-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; transition: all .22s ease; }
+.criterion-card:hover { box-shadow: var(--shadow); }
+.criterion-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.criterion-letter {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: var(--accent);
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  font-size: 18px;
+}
+.criterion-title { font-weight: 700; color: var(--primary); font-size: 14px; }
+.criterion-desc { font-size: 11px; color: var(--text-2); margin-top: 1px; }
+.criterion-score { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; color: var(--primary); }
+.criterion-score span { font-size: 13px; color: var(--text-2); font-weight: 400; }
+.bar-track { height: 8px; background: var(--surface-2); border-radius: 100px; overflow: hidden; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 100px; transition: width 1s ease; }
+
+/* ====== ACTION CARDS ====== */
+.action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; animation: fadeSlideUp 0.5s ease 0.2s both; }
+.action-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.action-card:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(11,20,55,.12); border-color: var(--accent); }
+.action-title { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--primary); font-size: 17px; margin-top: 12px; margin-bottom: 4px; }
+.action-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
+
+/* ====== QUOTE ====== */
+.quote-card {
+  background: linear-gradient(135deg, #fffdf4 0%, #fff 100%);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 22px 26px;
+  margin-top: 28px;
+  animation: fadeSlideUp 0.5s ease 0.3s both;
+}
+.quote-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 17px; color: var(--primary); margin: 10px 0 6px; line-height: 1.5; }
+.quote-author { color: var(--text-2); font-size: 13px; }
+
+/* ====== UNIT TILES ====== */
+.unit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.unit-tile {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.unit-tile:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(11,20,55,.12); border-color: var(--accent); }
+.unit-tile::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+.unit-icon { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-2)); display: grid; place-items: center; margin-bottom: 12px; color: var(--accent); font-size: 18px; }
+.unit-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 18px; color: var(--primary); margin-bottom: 4px; }
+.unit-meta { font-size: 12px; color: var(--text-2); }
+.unit-subtopics { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 4px; }
+.subtopic-chip { font-size: 11px; padding: 4px 10px; background: var(--surface-2); color: var(--primary); border-radius: 100px; }
+
+/* ====== ONBOARDING ====== */
+.onboard-bg {
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+  display: grid; place-items: center;
+  z-index: 2000;
+  padding: 20px;
+  overflow-y: auto;
+}
+.onboard-bg::before {
+  content: '';
+  position: absolute;
+  top: 10%; left: 10%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(212,175,55,.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.onboard-card {
+  background: white;
+  border-radius: 22px;
+  padding: 52px 44px;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: 0 30px 60px rgba(0,0,0,.4);
+  position: relative;
+  z-index: 1;
+  animation: fadeSlideUp 0.5s ease both;
+}
+.onboard-card-wide { max-width: 560px; padding: 42px; }
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: white;
+  border: 1.5px solid #dadce0;
+  color: #3c4043;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.google-btn:hover { background: #f8f9fa; box-shadow: 0 1px 3px rgba(60,64,67,.08), 0 4px 8px rgba(60,64,67,.1); }
+.google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 18px 0;
+  color: var(--text-2);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+.divider span { padding: 0 14px; }
+
+.role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+.year-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 18px; }
+.track-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+.role-tile, .year-tile, .track-tile {
+  background: white;
+  border: 2px solid #e8e8ee;
+  border-radius: 14px;
+  padding: 20px 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.role-tile:hover, .year-tile:hover, .track-tile:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(11,20,55,.12);
+}
+.track-tile-gold { border-color: var(--accent); background: linear-gradient(180deg, #fffdf4, white); }
+.year-tile { text-align: center; padding: 16px 8px; }
+.year-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 800; color: var(--primary); }
+.year-sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+.step-dots { display: flex; gap: 8px; justify-content: center; margin-top: 28px; }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; background: #e8e8ee; transition: all 0.2s; }
+.step-dot-active { background: var(--accent); width: 28px; border-radius: 100px; }
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { position: relative; height: auto; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .action-grid { grid-template-columns: 1fr; }
+  .criterion-grid { grid-template-columns: 1fr; }
+}
+
+/* ====== SCROLLBAR ====== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* ====== EMPTY STATE ====== */
+.empty { background: white; border: 1px dashed var(--border); border-radius: 16px; padding: 60px 30px; text-align: center; color: var(--text-2); }
+.empty-icon { display: inline-grid; place-items: center; width: 60px; height: 60px; border-radius: 16px; background: var(--surface-2); margin-bottom: 14px; }
+.empty-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--primary); margin-bottom: 6px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+/* ====== SVG ICON ====== */
+const I = ({name, size=18}) => {
+  const p = {
+    dashboard: 'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z',
+    book: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
+    paper: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
+    flask: 'M9 2v6.5L4 19a2 2 0 0 0 1.7 3h12.6a2 2 0 0 0 1.7-3l-5-10.5V2 M8 2h8 M7 13h10',
+    chat: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
+    chart: 'M3 3v18h18 M7 14l4-4 4 4 5-5',
+    settings: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+    flame: 'M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z',
+    trophy: 'M6 9H4.5a2.5 2.5 0 0 1 0-5H6 M18 9h1.5a2.5 2.5 0 0 0 0-5H18 M4 22h16 M18 2H6v7a6 6 0 0 0 12 0V2z',
+    star: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+    sparkle: 'M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5L12 2z',
+    play: 'M5 3l14 9-14 9V3z',
+    check: 'M20 6L9 17l-5-5',
+    arrowR: 'M5 12h14 M12 5l7 7-7 7',
+    lock: 'M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z M7 11V7a5 5 0 0 1 10 0v4',
+    logout: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9',
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      {(p[name]||'').split(' M').map((d,i)=><path key={i} d={(i?'M':'')+d}/>)}
+    </svg>
+  );
+};
+
+/* ====== SHADER HERO LANDING ====== */
+function ShaderHero({ onEnter }) {
+  return (
+    <div className="shader-hero">
+      <div className="shader-bg"/>
+      <div className="shader-mesh"/>
+      <div className="shader-orb shader-orb-1"/>
+      <div className="shader-orb shader-orb-2"/>
+      <div className="shader-orb shader-orb-3"/>
+
+      <header className="shader-header">
+        <div className="shader-logo">
+          <svg viewBox="0 0 100 100" width="40" height="40" fill="white">
+            <path d="M15 85V15h12l18 35 18-35h12v70h-12V35L45 70h-10L17 35v50H15z"/>
+          </svg>
+        </div>
+        <nav className="shader-nav">
+          <a href="#">Features</a>
+          <a href="#">Pricing</a>
+          <a href="#">Docs</a>
+        </nav>
+        <div className="shader-login-group">
+          <div className="shader-login-arrow">
+            <svg width="12" height="12" fill="none" stroke="black" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+          <button className="shader-login-btn" onClick={onEnter}>Login</button>
+        </div>
+      </header>
+
+      <div className="shader-main">
+        <div className="shader-badge"><span>IB MYP Mathematics · Years 1–5</span></div>
+        <h1 className="shader-h1">
+          <span className="line-1">Learn</span>
+          <span className="line-2">Understand</span>
+          <span className="line-3">Succeed</span>
+        </h1>
+        <p className="shader-desc">
+          AI-guided criterion-based assessment. 600+ generated problems graded against IB descriptors.
+          Investigations, practice papers, and an AI teacher — all in one premium platform.
+        </p>
+        <div className="shader-actions">
+          <button className="shader-btn-outline">View Features</button>
+          <button className="shader-btn-gold" onClick={onEnter}>Get Started Free</button>
+        </div>
+      </div>
+
+      <div className="shader-spinner">
+        <div className="shader-spinner-ring"/>
+        <div className="shader-spinner-ring"/>
+        <div className="shader-spinner-core"/>
+      </div>
+    </div>
+  );
+}
+
+/* ====== SIGN IN ====== */
+function SignIn({ onSignedIn }) {
+  const [email, setEmail] = useState('');
+  const [signing, setSigning] = useState(false);
+  const go = () => {
+    setSigning(true);
+    setTimeout(() => {
+      onSignedIn({ email: email || 'student@example.com', name: (email||'student@example.com').split('@')[0].split('.').map(n=>n.charAt(0).toUpperCase()+n.slice(1)).join(' ') });
+    }, 600);
+  };
+  return (
+    <div className="onboard-bg">
+      <div className="onboard-card">
+        <div style={{textAlign:'center',marginBottom:36}}>
+          <div className="brand-mark" style={{width:64,height:64,display:'inline-grid',marginBottom:22,borderRadius:18,fontSize:0}}>
+            <svg viewBox="0 0 40 40" width="36" height="36" fill="none"><path d="M8 30 L8 12 L14 12 L20 22 L26 12 L32 12 L32 30 L28 30 L28 18 L22 27 L18 27 L12 18 L12 30 Z" fill="#0B1437"/></svg>
+          </div>
+          <h1 style={{fontFamily:'Playfair Display',fontSize:32,color:'var(--primary)',fontWeight:800,marginBottom:6}}>MYP Companion</h1>
+          <div style={{color:'var(--text-2)',fontSize:13,letterSpacing:'.08em',textTransform:'uppercase',fontWeight:600}}>IB Mathematics · Years 1–5</div>
+        </div>
+        <h2 style={{fontFamily:'Playfair Display',fontSize:22,color:'var(--primary)',marginBottom:8,textAlign:'center'}}>Sign in to continue</h2>
+        <p style={{color:'var(--text-2)',marginBottom:28,fontSize:13.5,textAlign:'center',lineHeight:1.55}}>Your progress, criterion scores, and investigation history will be saved.</p>
+        <input className="input-field" placeholder="your.name@school.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==='Enter'&&go()} style={{marginBottom:14}}/>
+        <button className="google-btn" onClick={go} disabled={signing}>
+          {signing ? 'Signing in…' : (
+            <>
+              <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
+              Continue with Google
+            </>
+          )}
+        </button>
+        <div className="divider"><span>or</span></div>
+        <button className="btn-primary btn-block" onClick={go} disabled={signing} style={{padding:12}}><I name="check" size={14}/> Continue with Email</button>
+      </div>
+    </div>
+  );
+}
+
+/* ====== ONBOARDING ====== */
+function Onboarding({ onComplete, initialName }) {
+  const [step, setStep] = useState(0);
+  const [data, setData] = useState({ role:'', name:initialName||'', school:'', year:0, track:'' });
+  const next = (patch) => { const d={...data,...patch}; setData(d); step<4?setStep(step+1):onComplete(d); };
+  return (
+    <div className="onboard-bg">
+      <div className="onboard-card onboard-card-wide" style={{animation:'fadeSlideUp 0.4s ease both'}}>
+        <div style={{textAlign:'center',marginBottom:28}}>
+          <div style={{display:'inline-flex',alignItems:'center',gap:12,marginBottom:14}}>
+            <div className="brand-mark" style={{width:46,height:46,fontSize:0}}><I name="sparkle" size={20}/></div>
+            <span style={{fontFamily:'Playfair Display',fontWeight:800,fontSize:24,color:'var(--primary)'}}>MYP Companion</span>
+          </div>
+          <p style={{color:'var(--text-2)',fontSize:14,letterSpacing:'.06em',textTransform:'uppercase'}}>IB Mathematics · Years 1–5</p>
+        </div>
+
+        {step===0 && <div key="0">
+          <h2 style={{fontFamily:'Playfair Display',fontSize:32,marginBottom:8,color:'var(--primary)'}}>Welcome.</h2>
+          <p style={{color:'var(--text-2)',marginBottom:28,lineHeight:1.6}}>An AI-guided platform built around the IB MYP criterion-based assessment model.</p>
+          <button className="btn-primary btn-block" onClick={()=>setStep(1)}>Begin Setup <I name="arrowR" size={16}/></button>
+        </div>}
+
+        {step===1 && <div key="1">
+          <h3 style={{fontFamily:'Playfair Display',fontSize:26,color:'var(--primary)',marginBottom:8}}>I am a…</h3>
+          <div className="role-grid">
+            {[{id:'student',icon:'book',t:'Student',s:'Practice, investigate, earn criterion marks'},{id:'teacher',icon:'chart',t:'Teacher',s:'Review work, set tasks, track classes'}].map(r=>(
+              <button key={r.id} className="role-tile" onClick={()=>next({role:r.id})}>
+                <I name={r.icon} size={28} /><div style={{fontWeight:700,fontSize:16,color:'var(--primary)',marginTop:10,marginBottom:4}}>{r.t}</div><div style={{fontSize:12,color:'var(--text-2)',lineHeight:1.5}}>{r.s}</div>
+              </button>
+            ))}
+          </div>
+        </div>}
+
+        {step===2 && <div key="2">
+          <h3 style={{fontFamily:'Playfair Display',fontSize:26,color:'var(--primary)',marginBottom:8}}>What's your name?</h3>
+          <input className="input-field" placeholder="e.g. Aarav Sharma" value={data.name} onChange={e=>setData({...data,name:e.target.value})}/>
+          <input className="input-field" style={{marginTop:14}} placeholder="School name (optional)" value={data.school} onChange={e=>setData({...data,school:e.target.value})}/>
+          <button className="btn-primary btn-block" style={{marginTop:20}} disabled={!data.name.trim()} onClick={()=>setStep(3)}>Continue <I name="arrowR" size={16}/></button>
+        </div>}
+
+        {step===3 && <div key="3">
+          <h3 style={{fontFamily:'Playfair Display',fontSize:26,color:'var(--primary)',marginBottom:8}}>MYP Year</h3>
+          <p style={{color:'var(--text-2)',marginBottom:18,fontSize:14}}>Which year are you currently studying?</p>
+          <div className="year-grid">{[1,2,3,4,5].map(y=>(
+            <button key={y} className="year-tile" onClick={()=>next({year:y})}><div className="year-num">{y}</div><div className="year-sub">Grade {y+5}</div></button>
+          ))}</div>
+        </div>}
+
+        {step===4 && <div key="4">
+          <h3 style={{fontFamily:'Playfair Display',fontSize:26,color:'var(--primary)',marginBottom:8}}>Mathematics Track</h3>
+          <div className="track-grid">
+            <button className="track-tile" onClick={()=>next({track:'Standard'})}><div style={{fontSize:10,padding:'4px 10px',background:'var(--surface-2)',borderRadius:100,display:'inline-block',fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--primary)'}}>Standard</div><div style={{fontWeight:700,fontSize:16,color:'var(--primary)',marginTop:10,marginBottom:4}}>MYP Mathematics</div><div style={{fontSize:12,color:'var(--text-2)',lineHeight:1.5}}>Core syllabus for most MYP students.</div></button>
+            <button className="track-tile track-tile-gold" onClick={()=>next({track:'Extended'})}><div style={{fontSize:10,padding:'4px 10px',background:'linear-gradient(135deg,var(--accent),var(--accent-2))',borderRadius:100,display:'inline-block',fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--primary)'}}>Extended</div><div style={{fontWeight:700,fontSize:16,color:'var(--primary)',marginTop:10,marginBottom:4}}>Extended Mathematics</div><div style={{fontSize:12,color:'var(--text-2)',lineHeight:1.5}}>For students aiming at HL Analysis.</div></button>
+          </div>
+        </div>}
+
+        {step>0&&step<5 && <div className="step-dots">{[1,2,3,4].map(i=><span key={i} className={`step-dot ${i<=step?'step-dot-active':''}`}/>)}</div>}
+      </div>
+    </div>
+  );
+}
+
+/* ====== SIDEBAR ====== */
+function Sidebar({ page, setPage, user, onSignOut }) {
+  const sections = [
+    { label:'Learn', items:[{id:'dashboard',label:'Dashboard',icon:'dashboard'},{id:'teacher',label:'AI Teacher',icon:'chat'}]},
+    { label:'Practice', items:[{id:'qbank',label:'Question Bank',icon:'sparkle'},{id:'papers',label:'Practice Papers',icon:'paper'},{id:'investigations',label:'Investigations',icon:'flask'},{id:'criterion',label:'Criterion Tests',icon:'star'}]},
+    { label:'Account', items:[{id:'progress',label:'My Progress',icon:'chart'},{id:'settings',label:'Settings',icon:'settings'}]},
+  ];
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-inner">
+        <div className="brand">
+          <div className="brand-mark"><svg viewBox="0 0 40 40" width="28" height="28" fill="none"><path d="M8 30 L8 12 L14 12 L20 22 L26 12 L32 12 L32 30 L28 30 L28 18 L22 27 L18 27 L12 18 L12 30 Z" fill="#0B1437"/></svg></div>
+          <div><div className="brand-name">MYP Companion</div><div className="brand-tag">{user.track} · Year {user.year}</div></div>
+        </div>
+        <nav style={{flex:1}}>
+          {sections.map((s,si)=>(
+            <div key={si}>
+              <div className="nav-label">{s.label}</div>
+              {s.items.map(item=>(
+                <button key={item.id} className={`nav-item ${page===item.id?'active':''}`} onClick={()=>setPage(item.id)}><I name={item.icon} size={18}/><span>{item.label}</span></button>
+              ))}
+            </div>
+          ))}
+        </nav>
+        <div className="profile-card">
+          <div className="avatar">{user.name.charAt(0).toUpperCase()}</div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:13,fontWeight:600,color:'white'}}>{user.name}</div>
+            <div style={{fontSize:11,color:'rgba(255,255,255,.5)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{user.email||user.school||'Signed in'}</div>
+          </div>
+          {onSignOut && <button onClick={onSignOut} style={{background:'transparent',border:'none',color:'rgba(255,255,255,.5)',cursor:'pointer',padding:4}}><I name="logout" size={14}/></button>}
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+/* ====== DASHBOARD ====== */
+function Dashboard({ user, stats, setPage }) {
+  const gr = () => { const h=new Date().getHours(); return h<12?'Good morning':h<17?'Good afternoon':'Good evening'; };
+  const quotes = ['Mathematics is the music of reason. — James Joseph Sylvester','Pure mathematics is, in its way, the poetry of logical ideas. — Albert Einstein','The only way to learn mathematics is to do mathematics. — Paul Halmos'];
+  const q = quotes[new Date().getDate()%quotes.length];
+  const crit = {A:{t:'Knowing & Understanding',c:'#3B82F6'},B:{t:'Investigating Patterns',c:'#EC4899'},C:{t:'Communicating',c:'#10B981'},D:{t:'Applying to Real Life',c:'#F97316'}};
+  return (
+    <div>
+      <div className="hero">
+        <div className="hero-content">
+          <div className="hero-eyebrow">{new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}</div>
+          <h1 className="hero-title">{gr()}, <span className="gold">{user.name.split(' ')[0]}</span>.</h1>
+          <p className="hero-sub">You're studying MYP Year {user.year} · {user.track} Track. Every problem is graded against IB criterion descriptors, out of 8.</p>
+          <div className="hero-actions">
+            <button className="btn-primary" onClick={()=>setPage('qbank')}><I name="play" size={14}/> Quick 5-Question Test</button>
+            <button className="btn-ghost" onClick={()=>setPage('papers')}><I name="paper" size={14}/> Take a Practice Paper</button>
+          </div>
+        </div>
+        <div style={{position:'relative',zIndex:2,opacity:.85}}>
+          <svg viewBox="0 0 200 200" width="180" height="180"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#D4AF37" stopOpacity=".9"/><stop offset="1" stopColor="#F4D783" stopOpacity=".3"/></linearGradient></defs>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="url(#hg)" strokeWidth="1.5" opacity=".6"/><circle cx="100" cy="100" r="60" fill="none" stroke="url(#hg)" strokeWidth="1" opacity=".5"/><circle cx="100" cy="100" r="40" fill="none" stroke="url(#hg)" strokeWidth=".8" opacity=".4"/><polygon points="100,40 130,90 100,140 70,90" fill="none" stroke="#D4AF37" strokeWidth="1.2" opacity=".6"/><text x="100" y="105" textAnchor="middle" fontFamily="Playfair Display" fontSize="32" fill="#D4AF37" opacity=".85">∑</text>
+          </svg>
+        </div>
+      </div>
+
+      <div className="stat-grid">
+        {[{icon:'flame',n:stats.streak,l:'Day Streak'},{icon:'trophy',n:stats.xp,l:'Total XP'},{icon:'star',n:stats.level,l:'Scholar Level'},{icon:'check',n:stats.problemsSolved,l:'Problems Solved'}].map((s,i)=>(
+          <div key={i} className="stat-card"><div className="stat-icon"><I name={s.icon} size={22}/></div><div className="stat-num">{s.n}</div><div className="stat-label">{s.l}</div></div>
+        ))}
+      </div>
+
+      <h2 className="section-title">Criterion Performance</h2>
+      <p className="section-sub">Your IB MYP criterion averages — each problem is graded 0–8 against descriptors.</p>
+      <div className="criterion-grid">
+        {['A','B','C','D'].map(c=>{
+          const sc=stats.criteria[c]||0; const pct=(sc/8)*100;
+          return (
+            <div key={c} className="criterion-card">
+              <div className="criterion-head">
+                <div className="criterion-letter">{c}</div>
+                <div style={{flex:1}}><div className="criterion-title">Criterion {c}</div><div className="criterion-desc">{crit[c].t}</div></div>
+                <div className="criterion-score">{sc.toFixed(1)}<span>/8</span></div>
+              </div>
+              <div className="bar-track"><div className="bar-fill" style={{width:pct+'%',background:`linear-gradient(90deg, ${crit[c].c}, ${crit[c].c}99)`}}/></div>
+            </div>
+          );
+        })}
+      </div>
+
+      <h2 className="section-title">Continue Learning</h2>
+      <div className="action-grid">
+        {[{icon:'book',t:'Question Bank',d:'5 random questions across any unit. Timed or untimed.',p:'qbank'},{icon:'paper',t:'Practice Papers',d:'Full mock exams. Paper 1 (no-calc) or Paper 2 (calc).',p:'papers'},{icon:'flask',t:'Investigations',d:'9-step IB Criterion B inquiry tasks. Discover patterns.',p:'investigations'},{icon:'star',t:'Criterion Tests',d:'Target a specific criterion with focused practice.',p:'criterion'},{icon:'chat',t:'AI Teacher Board',d:'Ask any maths question. Voice input. Diagram support.',p:'teacher'},{icon:'chart',t:'My Progress',d:'Attempt history. Earned badges. Strengths & weak areas.',p:'progress'}].map((c,i)=>(
+          <button key={i} className="action-card" onClick={()=>setPage(c.p)}>
+            <I name={c.icon} size={26}/><div className="action-title">{c.t}</div><div className="action-desc">{c.d}</div>
+          </button>
+        ))}
+      </div>
+
+      <div className="quote-card">
+        <I name="sparkle" size={20}/>
+        <div className="quote-text">"{q.split(' — ')[0]}"</div>
+        <div className="quote-author">— {q.split(' — ')[1]}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ====== QUESTION BANK ====== */
+function QuestionBank({ user }) {
+  const units = [{n:'Number',i:'🔢',s:['Integers','Fractions','Decimals','Percentages']},{n:'Algebra',i:'𝒙',s:['Patterns','Expressions','Equations','Sequences']},{n:'Geometry',i:'△',s:['Area & Perimeter','Angles','2D Shapes','Symmetry']},{n:'Statistics & Probability',i:'📊',s:['Mean, Median, Mode','Data Display','Probability']},{n:'Measurement',i:'📏',s:['Unit Conversion','Time','Length and Mass']}];
+  return (
+    <div>
+      <div className="hero"><div className="hero-content"><div className="hero-eyebrow">Question Bank · Year {user.year} · {user.track}</div><h1 className="hero-title">Practice your way.</h1><p className="hero-sub">Choose any unit, any band (1–2 easy to 7–8 multi-part), any number of questions. Every question is freshly generated, graded out of 8 against IB MYP descriptors.</p></div></div>
+      <h2 className="section-title" style={{marginTop:4}}>Units for Year {user.year}</h2>
+      <p className="section-sub">{units.length} units · choose a unit to configure your practice session</p>
+      <div className="unit-grid">
+        {units.map((u,i)=>(
+          <button key={i} className="unit-tile"><div className="unit-icon">{u.i}</div><div className="unit-title">{u.n}</div><div className="unit-meta">{u.s.length} subtopics</div><div className="unit-subtopics">{u.s.map((s,j)=><span key={j} className="subtopic-chip">{s}</span>)}</div></button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ====== PRACTICE PAPERS ====== */
+function PracticePapers({ user }) {
+  return (
+    <div>
+      <div className="hero"><div className="hero-content"><div className="hero-eyebrow">Practice Papers · Year {user.year} · {user.track}</div><h1 className="hero-title">Full IB-style exam papers.</h1><p className="hero-sub">Sit a complete mock under timed conditions. Auto-graded across criteria A–D.</p></div></div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}}>
+        {[{n:1,calc:false,t:45,q:8,c:'A & C',d:'Tests pure knowledge and mathematical communication.'},{n:2,calc:true,t:60,q:10,c:'B & D',d:'Tests pattern investigation and real-world application.'}].map(p=>(
+          <div key={p.n} className="action-card" style={{padding:'32px 28px',cursor:'pointer'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:14}}>
+              <I name="paper" size={32}/>
+              <span style={{fontSize:11,padding:'4px 10px',background:p.calc?'linear-gradient(135deg,var(--accent),var(--accent-2))':'var(--primary)',color:p.calc?'var(--primary)':'var(--accent)',borderRadius:100,fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase'}}>{p.calc?'Calculator':'No Calculator'}</span>
+            </div>
+            <div className="action-title" style={{fontSize:22}}>Paper {p.n}</div>
+            <div className="action-desc" style={{marginBottom:14,fontSize:13.5}}>{p.t} min · {p.q} questions · Criteria {p.c}.<br/>{p.d}</div>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:18}}>{[`⏱ ${p.t} min`,`${p.q} questions`,`${p.q*8} marks`].map((s,i)=><span key={i} className="subtopic-chip">{s}</span>)}</div>
+            <button className="btn-secondary btn-block"><I name="play" size={14}/> Begin Paper {p.n}</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ====== INVESTIGATIONS ====== */
+function Investigations({ user }) {
+  const invs = [{t:'Stacking Oranges',u:'Number'},{t:'Toothpick Squares',u:'Algebra'},{t:'Staircase Perimeter',u:'Geometry'},{t:'Dice Roll Frequencies',u:'Statistics'},{t:'Water Tank Filling',u:'Measurement'},{t:'Handshakes at a Party',u:'Algebra'}];
+  return (
+    <div>
+      <div className="hero"><div className="hero-content"><div className="hero-eyebrow">Investigations · Criterion B & D</div><h1 className="hero-title">Discover patterns. Prove rules.</h1><p className="hero-sub">10-step inquiry process — identify, extend, generalise, verify, apply, and explain.</p></div></div>
+      <div className="unit-grid">
+        {invs.map((inv,i)=>(
+          <button key={i} className="unit-tile"><div className="unit-icon"><I name="flask" size={20}/></div><div style={{display:'flex',justifyContent:'space-between'}}><div className="unit-title">{inv.t}</div><span className="subtopic-chip" style={{flexShrink:0}}>{inv.u}</span></div><div className="unit-meta">Criterion B · 10 steps · /80</div></button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ====== CRITERION TESTS ====== */
+function CriterionTests({ user }) {
+  const c = [{l:'A',t:'Knowing & Understanding',d:'Apply mathematics in familiar and unfamiliar situations.',c:'#3B82F6'},{l:'B',t:'Investigating Patterns',d:'Apply problem-solving techniques. Describe & justify general rules.',c:'#D4AF37'},{l:'C',t:'Communicating',d:'Use correct notation & terminology.',c:'#22A45A'},{l:'D',t:'Applying to Real Life',d:'Identify relevant maths in real-life contexts.',c:'#C04A4A'}];
+  return (
+    <div>
+      <div className="hero"><div className="hero-content"><div className="hero-eyebrow">Criterion-Focused Tests</div><h1 className="hero-title">Target one descriptor at a time.</h1><p className="hero-sub">6 questions per criterion. 35 minutes. Graded out of 48.</p></div></div>
+      <div className="criterion-grid">
+        {c.map(cr=>(
+          <div key={cr.l} className="criterion-card" style={{position:'relative',overflow:'hidden'}}>
+            <div style={{position:'absolute',top:0,right:0,width:80,height:80,background:`radial-gradient(circle, ${cr.c}33, transparent 70%)`}}/>
+            <div className="criterion-head"><div className="criterion-letter">{cr.l}</div><div style={{flex:1}}><div className="criterion-title">Criterion {cr.l}</div><div className="criterion-desc">{cr.t}</div></div></div>
+            <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.55,marginBottom:14}}>{cr.d}</p>
+            <button className="btn-secondary btn-block"><I name="play" size={14}/> Begin Criterion {cr.l} Test</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ====== AI TEACHER ====== */
+function TeacherBoard({ user }) {
+  const [msgs, setMsgs] = useState([{r:'ai',t:`Hello ${user.name.split(' ')[0]} — I'm your IB Maths Teacher. Ask me anything about MYP Year ${user.year} ${user.track} mathematics.`}]);
+  const [input, setInput] = useState('');
+  const ref = useRef(null);
+  useEffect(()=>{if(ref.current) ref.current.scrollTop=ref.current.scrollHeight;},[msgs]);
+  const send = () => {
+    if(!input.trim()) return;
+    setMsgs(p=>[...p,{r:'me',t:input.trim()}]);
+    const q=input.toLowerCase(); setInput('');
+    setTimeout(()=>{
+      let reply = 'I\'d be happy to help with that. Could you give me more context — is this algebra, geometry, statistics, probability, or measurement? I\'ll walk you through step by step.';
+      if(q.match(/pythagor/)) reply='The Pythagoras theorem: a² + b² = c². In a right triangle, the square of the hypotenuse equals the sum of the other two sides squared. Want to try an example?';
+      if(q.match(/quadratic/)) reply='A quadratic equation ax² + bx + c = 0 can be solved by factorising, completing the square, or the quadratic formula: x = [-b ± √(b²-4ac)] / 2a.';
+      if(q.match(/trig|sin|cos|tan/)) reply='SOH CAH TOA: sin(θ) = O/H, cos(θ) = A/H, tan(θ) = O/A. These connect angles and side lengths in right triangles.';
+      if(q.match(/percent|interest/)) reply='Compound interest: A = P(1 + r/n)^(nt). For simple percentage: new = original × (1 + rate/100).';
+      setMsgs(p=>[...p,{r:'ai',t:reply}]);
+    }, 500);
+  };
+  return (
+    <div>
+      <h1 style={{fontFamily:'Playfair Display',fontSize:32,color:'var(--primary)',marginBottom:4}}>AI Teacher Board</h1>
+      <p style={{color:'var(--text-2)',fontSize:14,marginBottom:16}}>Conversational tutoring · Year {user.year} {user.track}</p>
+      <div style={{background:'white',border:'1px solid var(--border)',borderRadius:16,padding:28,minHeight:500,display:'flex',flexDirection:'column'}}>
+        <div ref={ref} style={{flex:1,overflowY:'auto',paddingBottom:16}}>
+          {msgs.map((m,i)=>(
+            <div key={i} style={{display:'flex',gap:12,marginBottom:18,flexDirection:m.r==='me'?'row-reverse':'row'}}>
+              <div style={{width:36,height:36,borderRadius:10,display:'grid',placeItems:'center',flexShrink:0,background:m.r==='me'?'linear-gradient(135deg,var(--accent),var(--accent-2))':'linear-gradient(135deg,var(--primary),var(--primary-2))',color:m.r==='me'?'var(--primary)':'var(--accent)',fontWeight:700,fontSize:13}}>{m.r==='me'?user.name.charAt(0):<I name="sparkle" size={16}/>}</div>
+              <div style={{background:m.r==='me'?'linear-gradient(180deg,#fffdf4,white)':'white',border:`1px solid ${m.r==='me'?'var(--accent)':'var(--border)'}`,borderRadius:14,padding:'14px 18px',lineHeight:1.6,fontSize:14,flex:1,maxWidth:'78%',whiteSpace:'pre-wrap'}}>{m.t}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{display:'flex',gap:10,alignItems:'flex-end',paddingTop:16,borderTop:'1px solid var(--border)'}}>
+          <textarea style={{flex:1,minHeight:48,maxHeight:160,padding:'12px 16px',border:'1px solid var(--border)',borderRadius:12,fontSize:14,fontFamily:'inherit',resize:'none',outline:'none'}} placeholder="Ask anything about MYP maths..." value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}}/>
+          <button onClick={send} style={{width:48,height:48,borderRadius:12,background:'linear-gradient(135deg,var(--accent),var(--accent-2))',border:'none',cursor:'pointer',display:'grid',placeItems:'center',color:'var(--primary)'}}><I name="arrowR" size={18}/></button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ====== MY PROGRESS ====== */
+function MyProgress({ user, stats }) {
+  return (
+    <div>
+      <div className="hero"><div className="hero-content"><div className="hero-eyebrow">Your Learning Journey</div><h1 className="hero-title">{stats.problemsSolved} problems mastered.</h1><p className="hero-sub">A complete record of your IB MYP Mathematics progress.</p></div></div>
+      <div className="stat-grid">
+        {[{icon:'flame',n:stats.streak,l:'Day Streak'},{icon:'trophy',n:stats.xp,l:'Total XP'},{icon:'star',n:stats.level,l:'Scholar Level'},{icon:'check',n:stats.problemsSolved,l:'Problems Solved'}].map((s,i)=>(
+          <div key={i} className="stat-card"><div className="stat-icon"><I name={s.icon} size={22}/></div><div className="stat-num">{s.n}</div><div className="stat-label">{s.l}</div></div>
+        ))}
+      </div>
+      <h2 className="section-title">Earned Badges</h2>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
+        {[{i:'flame',t:'First Streak',e:stats.streak>=3,d:'3-day streak'},{i:'star',t:'Rising Scholar',e:stats.xp>=100,d:'100 XP earned'},{i:'trophy',t:'Centurion',e:stats.problemsSolved>=100,d:'100 problems solved'},{i:'sparkle',t:'Pattern Hunter',e:(stats.criteria.B||0)>=6,d:'Avg 6+/8 on B'}].map((b,i)=>(
+          <div key={i} className="action-card" style={{cursor:'default',opacity:b.e?1:.4,position:'relative'}}>
+            <div style={{width:50,height:50,borderRadius:14,background:b.e?'linear-gradient(135deg,var(--accent),var(--accent-2))':'var(--surface-2)',display:'grid',placeItems:'center',marginBottom:12}}><I name={b.e?b.i:'lock'} size={22}/></div>
+            <div className="action-title" style={{fontSize:15}}>{b.t}</div><div className="action-desc">{b.d}</div>
+            {b.e && <div style={{position:'absolute',top:14,right:14,fontSize:10,fontWeight:700,color:'var(--accent-3)',letterSpacing:'.06em',textTransform:'uppercase'}}>Earned</div>}
+          </div>
+        ))}
+      </div>
+      <h2 className="section-title">Recent Attempts</h2>
+      <div className="empty"><div className="empty-icon"><I name="chart" size={26}/></div><div className="empty-title">No attempts yet</div><div>Complete your first test to see it here.</div></div>
+    </div>
+  );
+}
+
+/* ====== SETTINGS ====== */
+function Settings({ user }) {
+  return (
+    <div>
+      <h1 style={{fontFamily:'Playfair Display',fontSize:32,color:'var(--primary)',marginBottom:8}}>Settings</h1>
+      <p style={{color:'var(--text-2)',fontSize:14,marginBottom:28}}>Update your profile, year and track.</p>
+      <div className="action-card" style={{cursor:'default',maxWidth:600,padding:22}}>
+        <label style={{fontSize:12,fontWeight:600,color:'var(--text-2)',marginBottom:6,display:'block'}}>Your name</label>
+        <input className="input-field" defaultValue={user.name}/>
+        <label style={{fontSize:12,fontWeight:600,color:'var(--text-2)',marginBottom:6,display:'block',marginTop:14}}>MYP Year</label>
+        <div className="year-grid" style={{marginTop:6}}>{[1,2,3,4,5].map(y=><button key={y} className="year-tile" style={{padding:'12px 6px',borderColor:y===user.year?'var(--accent)':'',background:y===user.year?'linear-gradient(180deg,#fffdf4,white)':''}}><div className="year-num" style={{fontSize:22}}>{y}</div><div className="year-sub">Grade {y+5}</div></button>)}</div>
+        <button className="btn-secondary btn-block" style={{marginTop:20}}><I name="check" size={14}/> Save Changes</button>
+      </div>
+    </div>
+  );
+}
+
+/* ====== MAIN APP ====== */
+function App() {
+  const [account, setAccount] = useState(null);
+  const [user, setUser] = useState(null);
+  const [page, setPage] = useState('dashboard');
+  const [showLanding, setShowLanding] = useState(true);
+  const [stats] = useState({ streak:1, xp:0, level:1, problemsSolved:0, criteria:{A:0,B:0,C:0,D:0} });
+
+  if (showLanding && !account) return <ShaderHero onEnter={()=>setShowLanding(false)} />;
+  if (!account) return <SignIn onSignedIn={acc=>{setAccount(acc);}} />;
+  if (!user) return <Onboarding onComplete={d=>{setUser({...d,email:account.email}); setPage('dashboard');}} initialName={account.name} />;
+
+  let content;
+  switch(page) {
+    case 'dashboard': content=<Dashboard user={user} stats={stats} setPage={setPage}/>; break;
+    case 'qbank': content=<QuestionBank user={user}/>; break;
+    case 'papers': content=<PracticePapers user={user}/>; break;
+    case 'investigations': content=<Investigations user={user}/>; break;
+    case 'criterion': content=<CriterionTests user={user}/>; break;
+    case 'teacher': content=<TeacherBoard user={user}/>; break;
+    case 'progress': content=<MyProgress user={user} stats={stats}/>; break;
+    case 'settings': content=<Settings user={user}/>; break;
+    default: content=<Dashboard user={user} stats={stats} setPage={setPage}/>;
+  }
+
+  return (
+    <div className="app">
+      <Sidebar page={page} setPage={setPage} user={user} onSignOut={()=>{setAccount(null);setUser(null);setShowLanding(true);}}/>
+      <main className="main">{content}</main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
