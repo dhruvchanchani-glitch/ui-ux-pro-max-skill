@@ -23,7 +23,7 @@ Supabase later (Phase J) doesn't touch any feature code.
 | G. Draft Battle | ✅ | Squad Builder, chemistry, simulation |
 | H. Leaderboard + Profile | ✅ | Tabs, podium, repaint warning |
 | I. Polish | ✅ | Reduced motion, haptics, contrast lint |
-| J. Real Supabase | 🟡 | Migration SQL drafted; activate by setting `VITE_SUPABASE_URL` |
+| J. Real Supabase | ✅ | Wallet + bets + leaderboard wired; auction/draft still on mock |
 | K. Launch readiness | 🟡 | Legal stubs + app-store template included |
 
 ## Getting started
@@ -68,20 +68,19 @@ src/
 └── features/       one folder per screen group
 ```
 
-## Adding a Supabase backend (Phase J)
+## Switching between mock and real Supabase
 
-1. Create a Supabase project, copy the **URL** and **anon key**.
-2. Copy `.env.example` → `.env.local` and fill in:
-   ```bash
-   VITE_SUPABASE_URL="https://xxxxx.supabase.co"
-   VITE_SUPABASE_ANON_KEY="eyJhbGciOi..."
-   ```
-3. Apply the migrations in `supabase/migrations/` via `supabase db push`
-   or the SQL editor.
-4. Implement `src/lib/supabaseBackend.ts` against the same `Backend`
-   interface and update the selector in `src/lib/backend.ts`. The
-   migration files in `supabase/migrations/` map 1:1 to the methods on
-   the interface so the work is mostly mechanical.
+The app picks the backend at module load via the `Backend` interface in
+`src/lib/backend.ts`:
+
+- **Mock** — default. localStorage-persisted, no network. Used in tests
+  and when `.env.local` is missing.
+- **Supabase** — kicks in when both `VITE_SUPABASE_URL` and
+  `VITE_SUPABASE_ANON_KEY` are present.
+
+To activate the real backend, follow `supabase/README.md` — it walks
+through enabling anonymous sign-in, applying the migration SQL, and
+verifying with a single bet round-trip.
 
 ## Design system
 

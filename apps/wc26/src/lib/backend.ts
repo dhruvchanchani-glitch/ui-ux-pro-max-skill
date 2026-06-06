@@ -1,10 +1,10 @@
 /*
  * The backend interface. mockBackend.ts implements it in-memory for dev;
- * supabaseBackend.ts implements it against real tables / RPCs in Phase J.
+ * supabaseBackend.ts implements it against real tables / RPCs.
  *
- * The selectBackend() helper picks at module load — if a Supabase URL is
- * present in the env, that wins; otherwise the mock is used. The rest of
- * the app only ever imports `backend` from this file.
+ * Selection: when VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY are present
+ * we use the Supabase impl; otherwise we fall back to the localStorage
+ * mock so the app always runs.
  */
 
 import type { Match } from "@/data/matches";
@@ -124,15 +124,12 @@ export type Backend = {
     xpStaked: number;
   }): Promise<Accumulator>;
   getBets(): Promise<Bet[]>;
-  /**
-   * Simulates resolution of a finished match — settles every bet for
-   * that matchId. Returns the bets that just transitioned.
-   */
   resolveMatch(matchId: string): Promise<Bet[]>;
 
   // ===== Matches =====
   getMatch(id: string): Promise<Match | undefined>;
   getMatches(): Promise<Match[]>;
+
   // ===== Leaderboard =====
   getLeaderboard(scope: "weekly" | "tournament" | "friends"): Promise<LeaderboardRow[]>;
   enterRankedWeekly(): Promise<void>;
@@ -172,19 +169,11 @@ export type Backend = {
   }>;
 };
 
-// Lazy selector: actual impl is wired by mockBackend at module load and
-// the real Supabase impl will swap this binding in Phase J.
 import { mockBackend } from "./mockBackend";
+import { supabaseBackend } from "./supabaseBackend";
 
-const hasSupabase =
-  typeof import.meta !== "undefined" &&
-  !!(import.meta as ImportMeta & { env?: Record<string, string> }).env
-    ?.VITE_SUPABASE_URL;
+const env = (import.meta as ImportMeta & { env?: Record<string, string> }).env;
+const hasSupabase = !!(env?.VITE_SUPABASE_URL && env?.VITE_SUPABASE_ANON_KEY);
 
-export const backend: Backend = hasSupabase
-  ? // Lazy require so the bundle doesn't import supabaseBackend in dev.
-    // Phase J fills this in. Until then, fall back to mock.
-    mockBackend
-  : mockBackend;
-
+export const backend: Backend = hasSupabase ? supabaseBackend : mockBackend;
 export const isUsingMock = !hasSupabase;

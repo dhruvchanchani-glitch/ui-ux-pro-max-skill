@@ -1,6 +1,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { detectTimezone, detectLocale } from "@/lib/time";
+import { isUsingMock } from "@/lib/backend";
+
+async function syncProfileIfRealBackend(s: {
+  username: string;
+  supportedTeam: string;
+  timezone: string;
+}) {
+  if (isUsingMock) return;
+  try {
+    const { syncProfile } = await import("@/lib/supabaseBackend");
+    await syncProfile(s);
+  } catch (err) {
+    // Local UI keeps working from Zustand state. Log so devs notice.
+    console.warn("syncProfile failed:", err);
+  }
+}
 
 export type UserState = {
   hasOnboarded: boolean;
@@ -39,10 +55,43 @@ export const useUser = create<UserState>()(
       highContrast: false,
       supporterPass: false,
 
-      setUsername: (n) => set({ username: n }),
-      setSupportedTeam: (code) => set({ supportedTeam: code.toUpperCase() }),
-      setTimezone: (tz) => set({ timezone: tz }),
-      completeOnboarding: () => set({ hasOnboarded: true }),
+      setUsername: (n) => {
+        set({ username: n });
+        const s = useUser.getState();
+        void syncProfileIfRealBackend({
+          username: n,
+          supportedTeam: s.supportedTeam,
+          timezone: s.timezone,
+        });
+      },
+      setSupportedTeam: (code) => {
+        const upper = code.toUpperCase();
+        set({ supportedTeam: upper });
+        const s = useUser.getState();
+        void syncProfileIfRealBackend({
+          username: s.username,
+          supportedTeam: upper,
+          timezone: s.timezone,
+        });
+      },
+      setTimezone: (tz) => {
+        set({ timezone: tz });
+        const s = useUser.getState();
+        void syncProfileIfRealBackend({
+          username: s.username,
+          supportedTeam: s.supportedTeam,
+          timezone: tz,
+        });
+      },
+      completeOnboarding: () => {
+        set({ hasOnboarded: true });
+        const s = useUser.getState();
+        void syncProfileIfRealBackend({
+          username: s.username,
+          supportedTeam: s.supportedTeam,
+          timezone: s.timezone,
+        });
+      },
       togglePref: (key) =>
         set((s) => ({ ...s, [key]: !s[key] })),
       resetForDev: () =>
