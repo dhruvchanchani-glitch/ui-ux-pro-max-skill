@@ -1,0 +1,57 @@
+/*
+ * Design tokens. Mapped 1:1 to PRD Appendix A.
+ * Nation tokens (--nation-*) are mutated at runtime by lib/theme.ts.
+ */
+
+:root {
+  /* Canvas & ink — light mode */
+  --canvas: #fafaf7;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --ink: #0a0a0b;
+  --ink-2: #3f3f46;
+  --ink-3: #71717a;
+  --hairline: rgba(10, 10, 11, 0.08);
+  --scrim: rgba(10, 10, 11, 0.55);
+
+  /* Functional / semantic colours — never themed */
+  --xp: #7c3aed;
+  --xp-soft: #f3eeff;
+  --coin: #f5b301;
+  --coin-soft: #fff7db;
+  --win: #16a34a;
+  --loss: #dc2626;
+  --live: #ff2d55;
+  --paused: #f59e0b;
+
+  /* Nation tokens — default to Portugal so the app boots in colour even
+     before onboarding completes. Overwritten on supported-team change. */
+  --nation-primary: #046a38;
+  --nation-secondary: #da291c;
+  --nation-accent: #ffd100;
+  --nation-on-primary: #ffffff;
+  --nation-ink: #052e1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #0a0a0b;
+    --surface: #141416;
+    --surface-raised: #1c1c1f;
+    --ink: #fafaf7;
+    --ink-2: #a1a1aa;
+    --ink-3: #71717a;
+    --hairline: rgba(255, 255, 255, 0.1);
+    --scrim: rgba(0, 0, 0, 0.65);
+  }
+}
+
+/* High-contrast override — opt-in via `html.hc` */
+html.hc {
+  --ink-2: var(--ink);
+  --hairline: rgba(10, 10, 11, 0.24);
+}
+html.hc.dark,
+html.dark.hc {
+  --hairline: rgba(255, 255, 255, 0.24);
+}
