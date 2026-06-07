@@ -1,15 +1,20 @@
 /*
- * The backend interface. mockBackend.ts implements it in-memory for dev;
- * supabaseBackend.ts implements it against real tables / RPCs.
+ * The backend interface + a lazy-loading dispatch proxy.
  *
- * Selection: when VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY are present
- * we use the Supabase impl; otherwise we fall back to the localStorage
- * mock so the app always runs.
+ * Selection:
+ *   - If VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY are both set, the
+ *     Supabase implementation is loaded on first method call.
+ *   - Otherwise we use the in-memory mock (already loaded statically
+ *     because it's tiny and used by both code paths).
+ *
+ * Code-splitting: supabaseBackend (~143 KB gzipped due to supabase-js)
+ * is dynamically imported so mock-only builds don't pay for it.
  */
 
 import type { Match } from "@/data/matches";
 import type { Player } from "@/data/players";
 import type { MarketKind } from "@/data/markets";
+import { mockBackend } from "./mockBackend";
 
 export type BetStatus = "pending" | "won" | "lost" | "void";
 
@@ -70,7 +75,6 @@ export type AuctionState = {
   currentPlayerIndex: number;
   currentBidAmount: number;
   currentBidderId: string | null;
-  /** ms timestamp (Date.now-based) when the timer ends. */
   timerEnd: number;
   pool: Player[];
   participants: AuctionParticipant[];
@@ -82,7 +86,7 @@ export type AuctionParticipant = {
   name: string;
   nation: string;
   budgetM: number;
-  squad: string[]; // player ids
+  squad: string[];
   isAI: boolean;
   isYou: boolean;
 };
@@ -156,10 +160,7 @@ export type Backend = {
     starters: string[];
     bench: string[];
     formation: string;
-  }): Promise<{
-    squadRating: number;
-    chemistry: number;
-  }>;
+  }): Promise<{ squadRating: number; chemistry: number }>;
   simulateBattle(roomId: string): Promise<{
     yourScore: number;
     opponentScore: number;
@@ -169,11 +170,45 @@ export type Backend = {
   }>;
 };
 
-import { mockBackend } from "./mockBackend";
-import { supabaseBackend } from "./supabaseBackend";
-
 const env = (import.meta as ImportMeta & { env?: Record<string, string> }).env;
-const hasSupabase = !!(env?.VITE_SUPABASE_URL && env?.VITE_SUPABASE_ANON_KEY);
+export const isUsingMock = !(env?.VITE_SUPABASE_URL && env?.VITE_SUPABASE_ANON_KEY);
 
-export const backend: Backend = hasSupabase ? supabaseBackend : mockBackend;
-export const isUsingMock = !hasSupabase;
+let _impl: Backend | null = isUsingMock ? mockBackend : null;
+let _implLoad: Promise<Backend> | null = null;
+
+async function getImpl(): Promise<Backend> {
+  if (_impl) return _impl;
+  if (_implLoad) return _implLoad;
+  _implLoad = (async () => {
+    const m = await import("./supabaseBackend");
+    _impl = m.supabaseBackend;
+    return _impl;
+  })();
+  return _implLoad;
+}
+
+/**
+ * Public proxy. Each property access returns an async function that
+ * lazily resolves the backend impl on first call, then forwards. Because
+ * every method on Backend is already async, this adds at most one tick
+ * of latency before the first server-touching method.
+ */
+export const backend: Backend = new Proxy({} as Backend, {
+  get(_target, prop) {
+    return async (...args: unknown[]) => {
+      const i = await getImpl();
+      const key = prop as keyof Backend;
+      const fn = i[key] as unknown as (...a: unknown[]) => Promise<unknown>;
+      if (typeof fn !== "function") {
+        throw new Error(`Backend.${String(prop)} is not implemented`);
+      }
+      return fn.apply(i, args);
+    };
+  },
+});
+
+/** Force the impl to load before the first method call. Useful from
+ *  main.tsx so the auth round-trip starts during the splash screen. */
+export async function preloadBackend(): Promise<void> {
+  await getImpl();
+}

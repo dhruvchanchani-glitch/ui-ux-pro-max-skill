@@ -25,9 +25,12 @@ import {
   type Wallet,
   type Bet,
   type LeaderboardRow,
+  type AuctionState,
+  type AuctionParticipant,
 } from "./backend";
 import { mockBackend } from "./mockBackend";
 import { MATCHES, findMatch } from "@/data/matches";
+import { generateAuctionPool } from "@/data/players";
 
 const url = import.meta.env.VITE_SUPABASE_URL as string;
 const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
@@ -310,6 +313,96 @@ export const supabaseBackend: Backend = {
       throw new Error(`enter_ranked_weekly failed: ${error.message}`);
     }
   },
+
+  // ===== Auction =====
+  // Server-side state, realtime sync. The pool is regenerated client-side
+  // from the room id seed so we don't pay the round-trip cost of shipping
+  // ~24 player objects with every state read.
+  async startAuction(input) {
+    await ensureProfile();
+    const session = await getSession();
+    const participants: AuctionParticipant[] = [
+      {
+        id: session.user.id,
+        name: input.userName,
+        nation: input.userNation,
+        budgetM: 1000,
+        squad: [],
+        isAI: false,
+        isYou: true,
+      },
+    ];
+    const teamN = input.mode === "single" ? Math.max(2, input.teamCount) : input.teamCount;
+    for (let i = 1; i < teamN; i++) {
+      participants.push({
+        id: `ai_${i}`,
+        name: ["NeoStriker", "GoldenBoot", "MidfieldMaestro", "TacticianX"][i - 1] ?? `AI_${i}`,
+        nation: ["ARG", "ENG", "FRA", "GER"][i - 1] ?? "BRA",
+        budgetM: 1000,
+        squad: [],
+        isAI: true,
+        isYou: false,
+      });
+    }
+    const { data, error } = await supabase
+      .rpc("start_auction_room", {
+        p_match_id: input.matchId,
+        p_mode: input.mode,
+        p_participants: participants,
+      })
+      .single();
+    if (error || !data) throw new Error(`start_auction_room failed: ${error?.message}`);
+    return dbAuctionRowToState(data as DbAuctionRow);
+  },
+
+  async getAuctionState(roomId) {
+    await ensureProfile();
+    const { data, error } = await supabase
+      .from("auction_state")
+      .select("*")
+      .eq("room_id", roomId)
+      .maybeSingle();
+    if (error) throw new Error(`getAuctionState failed: ${error.message}`);
+    if (!data) return undefined;
+    return dbAuctionRowToState(data as DbAuctionRow);
+  },
+
+  async placeBid(roomId, _bidderId, amountM) {
+    await ensureProfile();
+    const { data, error } = await supabase
+      .rpc("place_bid_v2", { p_room_id: roomId, p_amount: amountM })
+      .single();
+    if (error || !data) throw new Error(`place_bid_v2 failed: ${error?.message}`);
+    return dbAuctionRowToState(data as DbAuctionRow);
+  },
+
+  async voteSkip(roomId, bidderId) {
+    // Skip votes are ephemeral broadcasts (FR-AUC-6), not persisted.
+    const { broadcastSkipVote } = await import("./auctionRealtime");
+    await broadcastSkipVote(roomId, bidderId);
+    const state = await this.getAuctionState(roomId);
+    if (!state) throw new Error("no_room");
+    return state;
+  },
+
+  async advanceAuction(roomId) {
+    const state = await this.getAuctionState(roomId);
+    if (!state) throw new Error("no_room");
+    const { data, error } = await supabase
+      .rpc("advance_auction", {
+        p_room_id: roomId,
+        p_pool_size: state.pool.length || 24,
+      })
+      .single();
+    if (error || !data) throw new Error(`advance_auction failed: ${error?.message}`);
+    return dbAuctionRowToState(data as DbAuctionRow);
+  },
+
+  // AI bidding runs client-side regardless of backend — the AI tick
+  // only happens in single-player mode.
+  tickAI(roomId) {
+    return mockBackend.tickAI(roomId);
+  },
 };
 
 /* ----- row mappers ----- */
@@ -350,5 +443,33 @@ function mapBetRow(b: DbBet): Bet {
     coinsAwarded: b.coins_awarded ?? undefined,
     placedAt: b.placed_at,
     accumulatorId: b.accumulator_id ?? undefined,
+  };
+}
+
+type DbAuctionRow = {
+  room_id: string;
+  status: string;
+  current_player_index: number;
+  current_bid_amount: number;
+  current_bidder_id: string | null;
+  timer_end: string;
+  participants: AuctionParticipant[];
+  log: AuctionState["log"];
+};
+
+function dbAuctionRowToState(row: DbAuctionRow): AuctionState {
+  // Pool is regenerated from the room id seed — same hash → same pool
+  // on every client without shipping ~24 player rows over the wire.
+  const pool = generateAuctionPool(row.room_id, row.participants.length);
+  return {
+    roomId: row.room_id,
+    status: row.status as AuctionState["status"],
+    currentPlayerIndex: row.current_player_index,
+    currentBidAmount: row.current_bid_amount,
+    currentBidderId: row.current_bidder_id,
+    timerEnd: new Date(row.timer_end).getTime(),
+    pool,
+    participants: row.participants ?? [],
+    log: row.log ?? [],
   };
 }

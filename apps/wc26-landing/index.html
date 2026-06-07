@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WC26 — Your World Cup, in your colours.</title>
+  <meta name="description" content="A World Cup 2026 companion app. Live scores in your time. Skill-based predictions. Real-time player auctions. Themed to the team you support." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="WC26 — Your World Cup, in your colours." />
+  <meta property="og:description" content="Live scores. Skill-based predictions. Real-time auctions. Themed to your team." />
+  <meta property="og:url" content="https://wc26.app/" />
+  <meta property="og:image" content="https://wc26.app/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="WC26" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="WC26 — Your World Cup, in your colours." />
+  <meta name="twitter:description" content="Live scores. Skill-based predictions. Real-time auctions. Themed to your team." />
+  <meta name="twitter:image" content="https://wc26.app/og-image.png" />
+
+  <link rel="canonical" href="https://wc26.app/" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0A0A0B" />
+
+  <!-- Fonts to match the app -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: "#FAFAF7",
+            ink: "#0A0A0B",
+            "ink-2": "#3F3F46",
+            "ink-3": "#71717A",
+            hairline: "rgba(10,10,11,0.08)",
+            xp: "#7C3AED",
+            coin: "#F5B301",
+            por: "#046A38",
+            "por-red": "#DA291C",
+          },
+          fontFamily: {
+            display: ["Anton", "sans-serif"],
+            sans: ["Inter", "system-ui", "sans-serif"],
+            mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #FAFAF7; color: #0A0A0B; font-family: Inter, system-ui, sans-serif; }
+    .font-display { font-family: Anton, sans-serif; letter-spacing: -0.02em; text-transform: uppercase; }
+    .font-mono { font-variant-numeric: tabular-nums; }
+    .outline-26 {
+      -webkit-text-stroke: 4px white;
+      color: transparent;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 120ms !important; }
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <!-- Identity layer: hero -->
+  <header class="relative overflow-hidden" style="background: linear-gradient(110deg, #046A38 50%, #DA291C 50%); color: #FFFFFF;">
+    <div class="absolute inset-y-0 left-1/2 w-px bg-black/40" aria-hidden></div>
+    <div class="absolute inset-0 grid place-items-center pointer-events-none" aria-hidden>
+      <span class="font-display text-[280px] sm:text-[400px] leading-none opacity-50 outline-26">26</span>
+    </div>
+
+    <nav class="relative z-10 max-w-6xl mx-auto px-5 sm:px-8 pt-6 flex items-center justify-between">
+      <span class="font-display text-2xl">WC26</span>
+      <a href="#download" class="bg-white text-ink rounded-full h-10 px-4 font-semibold inline-flex items-center">Get the app</a>
+    </nav>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-5 sm:px-8 pt-24 pb-32">
+      <h1 class="font-display text-[64px] sm:text-[112px] leading-[0.9]">
+        Your World Cup,<br/>in your colours.
+      </h1>
+      <p class="text-lg sm:text-xl mt-6 max-w-xl">
+        Pick your team. We theme every screen — fixtures, live scores, the auction lobby — in your nation's kit. Predict matches with XP, win Coins, climb the leaderboard.
+      </p>
+
+      <div class="mt-10 flex gap-3 flex-wrap">
+        <a href="#download" class="bg-white text-ink rounded-full h-12 px-6 font-bold inline-flex items-center">Download for iOS</a>
+        <a href="#download" class="border-2 border-white rounded-full h-12 px-6 font-bold inline-flex items-center">Get it on Android</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Utility layer: numbers, no fluff -->
+  <section class="max-w-6xl mx-auto px-5 sm:px-8 py-20">
+    <div class="grid sm:grid-cols-3 gap-6">
+      <div>
+        <p class="text-ink-3 text-xs uppercase font-bold tracking-widest">Free per day</p>
+        <p class="font-mono text-5xl font-bold mt-2">500 <span class="text-xp">XP</span></p>
+        <p class="text-ink-2 mt-2 text-sm">Enough for 5–10 predictions every match day. No streak resets just because you didn't log in.</p>
+      </div>
+      <div>
+        <p class="text-ink-3 text-xs uppercase font-bold tracking-widest">Markets per match</p>
+        <p class="font-mono text-5xl font-bold mt-2">7</p>
+        <p class="text-ink-2 mt-2 text-sm">Match Winner, Top Scorer, MVP, Total Goals, First Scorer, Clean Sheet, Red Card. Plus 2 Pro markets on Supporter Pass.</p>
+      </div>
+      <div>
+        <p class="text-ink-3 text-xs uppercase font-bold tracking-widest">Streak bonus</p>
+        <p class="font-mono text-5xl font-bold mt-2">+50%</p>
+        <p class="text-ink-2 mt-2 text-sm">Five right in a row gets you 50% more Coins. Reset on any miss. Watch the table.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="bg-white border-y border-hairline">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 space-y-16">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <p class="text-xs uppercase font-bold tracking-widest text-xp">01 · Identity</p>
+          <h2 class="font-display text-5xl mt-3 leading-none">Themed to your team.</h2>
+          <p class="text-ink-2 mt-4 text-lg">Every screen wears your nation's colours. 47 nations supported, each with its own home hero, accent stripe, and supporter badge. Switch teams and the whole app repaints instantly.</p>
+        </div>
+        <div class="aspect-[9/16] rounded-lg overflow-hidden" style="background: linear-gradient(110deg, #046A38 50%, #DA291C 50%); position: relative;">
+          <div class="absolute inset-0 grid place-items-center" aria-hidden>
+            <span class="font-display text-[160px] leading-none opacity-60" style="color: transparent; -webkit-text-stroke: 4px white;">26</span>
+          </div>
+          <p class="absolute bottom-5 left-5 text-white font-display text-4xl">Portugal</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div class="aspect-[9/16] rounded-lg bg-ink p-5 text-white order-2 md:order-1">
+          <p class="text-xs uppercase font-bold tracking-widest opacity-70">Match winner</p>
+          <div class="grid grid-cols-3 gap-2 mt-3">
+            <div class="border border-white/20 rounded-md p-3 text-center">
+              <p class="text-[10px] uppercase opacity-70">BRA</p>
+              <p class="font-mono text-lg font-bold">1.73</p>
+            </div>
+            <div class="border-2 border-xp rounded-md p-3 text-center">
+              <p class="text-[10px] uppercase opacity-70">Draw</p>
+              <p class="font-mono text-lg font-bold">3.42</p>
+            </div>
+            <div class="border border-white/20 rounded-md p-3 text-center">
+              <p class="text-[10px] uppercase opacity-70">POR</p>
+              <p class="font-mono text-lg font-bold">4.18</p>
+            </div>
+          </div>
+          <div class="mt-6 bg-white/5 rounded-md p-4">
+            <p class="text-xs uppercase opacity-70">You win</p>
+            <p class="font-mono text-coin text-3xl font-bold mt-1">340 <span class="text-base">coins</span></p>
+            <p class="text-xs opacity-70 mt-1">100 XP staked · ×1.73 odds · ×1.30 streak</p>
+          </div>
+        </div>
+        <div class="order-1 md:order-2">
+          <p class="text-xs uppercase font-bold tracking-widest text-xp">02 · Predict</p>
+          <h2 class="font-display text-5xl mt-3 leading-none">Skill earns Coins. Period.</h2>
+          <p class="text-ink-2 mt-4 text-lg">XP is the fuel — spend it to predict. Coins are the reward — earned only when you're right. You can buy XP. You can <strong>never</strong> buy Coins. The leaderboard reflects who actually called it.</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <p class="text-xs uppercase font-bold tracking-widest text-xp">03 · Auction</p>
+          <h2 class="font-display text-5xl mt-3 leading-none">€1 billion. 60 seconds.</h2>
+          <p class="text-ink-2 mt-4 text-lg">Match yourself with three other managers in a real-time auction. Bid on real players, build an XI with chemistry bonuses, settle it in a simulated Draft Battle. Win, claim XP and Coins, move on.</p>
+        </div>
+        <div class="aspect-[9/16] rounded-lg overflow-hidden bg-ink text-white p-5">
+          <p class="text-xs uppercase opacity-70 font-bold tracking-widest">Vinícius Jr · LW · OVR 95</p>
+          <div class="mt-3 aspect-square rounded-md bg-por grid place-items-center font-display text-7xl">
+            VIN
+          </div>
+          <div class="mt-4">
+            <p class="text-xs uppercase opacity-70">Current bid</p>
+            <p class="font-mono text-3xl font-bold">€45,000,000</p>
+          </div>
+          <div class="mt-3 grid grid-cols-3 gap-2">
+            <button class="h-11 rounded-full bg-por font-mono font-bold">+€5M</button>
+            <button class="h-11 rounded-full bg-por font-mono font-bold">+€10M</button>
+            <button class="h-11 rounded-full bg-por font-mono font-bold">+€25M</button>
+          </div>
+          <p class="text-center font-mono text-5xl font-bold mt-6">12.4</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- No pay-to-win bit -->
+  <section class="max-w-3xl mx-auto px-5 sm:px-8 py-20 text-center">
+    <h2 class="font-display text-5xl">No pay-to-win. Ever.</h2>
+    <p class="text-ink-2 mt-4 text-lg">XP top-ups buy you more predictions. They don't buy you Coins. They don't bend the odds. They don't shortcut the leaderboard. If you climb, it's because you called it right.</p>
+    <div class="mt-8 inline-flex items-center gap-2 bg-canvas border border-hairline rounded-full px-4 py-2">
+      <span class="w-2 h-2 rounded-full bg-xp"></span>
+      <span class="font-mono text-sm">XP = predictions</span>
+      <span class="w-px h-4 bg-hairline mx-1"></span>
+      <span class="w-2 h-2 rounded-full bg-coin"></span>
+      <span class="font-mono text-sm">Coins = rewards</span>
+    </div>
+  </section>
+
+  <!-- Download CTA -->
+  <section id="download" class="bg-ink text-white">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 text-center">
+      <h2 class="font-display text-5xl sm:text-6xl">June. Pick your nation.</h2>
+      <p class="text-lg mt-4 opacity-80">Free to play. Free 500 XP every day.</p>
+      <div class="mt-8 flex gap-3 justify-center flex-wrap">
+        <a href="#" class="bg-white text-ink rounded-full h-12 px-6 font-bold inline-flex items-center">App Store</a>
+        <a href="#" class="border-2 border-white rounded-full h-12 px-6 font-bold inline-flex items-center">Google Play</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-canvas border-t border-hairline">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-wrap items-center justify-between gap-3 text-sm text-ink-3">
+      <p>© 2026 WC26 · Not affiliated with FIFA or any national team featured.</p>
+      <nav class="flex gap-4">
+        <a href="/privacy.html" class="underline">Privacy</a>
+        <a href="/terms.html" class="underline">Terms</a>
+        <a href="mailto:support@wc26.app" class="underline">Support</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

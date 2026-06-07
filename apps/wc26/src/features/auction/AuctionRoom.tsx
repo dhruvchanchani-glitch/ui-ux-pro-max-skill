@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, SkipForward } from "lucide-react";
-import { backend } from "@/lib/backend";
+import { backend, isUsingMock } from "@/lib/backend";
+import { subscribeToAuction } from "@/lib/auctionRealtime";
 import { useAuctionStore } from "@/stores/auction";
+import { generateAuctionPool } from "@/data/players";
 import { findNation } from "@/data/nations";
 import { fmtBudget, fmtMillion } from "@/lib/currency";
 import { Pill } from "@/components/primitives/Pill";
@@ -27,6 +29,35 @@ export function AuctionRoom() {
     backend.getAuctionState(roomId).then((r) => {
       if (r) setRoom(r);
     });
+  }, [roomId, setRoom]);
+
+  // Realtime sync — on real Supabase, subscribe to the auction-state
+  // and skip-votes channels so other participants' updates land here
+  // instantly. No-op when on the mock backend.
+  useEffect(() => {
+    if (!roomId || isUsingMock) return;
+    let cancelled = false;
+    let unsub: (() => void) | null = null;
+    subscribeToAuction(
+      roomId,
+      (state) => {
+        if (cancelled) return;
+        // The DB doesn't carry the player pool — re-derive from the
+        // shared seed so every client sees the same player ordering.
+        const pool = generateAuctionPool(roomId, state.participants.length);
+        setRoom({ ...state, pool });
+      },
+      () => {
+        // Skip vote received — UI could surface the count; placeholder.
+      }
+    ).then((u) => {
+      if (cancelled) u();
+      else unsub = u;
+    });
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, [roomId, setRoom]);
 
   // Tick the visible timer + drive auction progression.
